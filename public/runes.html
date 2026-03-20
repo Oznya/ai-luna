@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle des Runes - Luna</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(160deg, #0B1F3A 0%, #1a0f2e 50%, #0B1F3A 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Ciel étoilé */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #D8B15A;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .runes-container {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Titre */
+        .titre-runes {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #D8B15A;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(216, 177, 90, 0.5);
+            letter-spacing: 3px;
+        }
+        .sous-titre {
+            text-align: center;
+            color: rgba(216, 177, 90, 0.7);
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        /* Les 3 emplacements */
+        #slots-tirage {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        .slot {
+            position: relative;
+            width: 100px;
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .slot-inner {
+            width: 80px;
+            height: 100px;
+            border: 2px dashed rgba(216, 177, 90, 0.4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(43, 15, 58, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .slot-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(216, 177, 90, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .slot.active .slot-inner {
+            border-style: solid;
+            border-color: #D8B15A;
+            background: linear-gradient(135deg, rgba(43, 15, 58, 0.6) 0%, rgba(11, 31, 58, 0.6) 100%);
+            box-shadow: 0 0 30px rgba(216, 177, 90, 0.3);
+        }
+        .slot.active .slot-inner::before {
+            opacity: 1;
+        }
+        .slot-label {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: rgba(216, 177, 90, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Cinzel', serif;
+        }
+        .slot.active .slot-label {
+            color: #D8B15A;
+        }
+        .slot-inner span {
+            color: rgba(216, 177, 90, 0.3);
+            font-size: 0.8rem;
+        }
+        .slot img {
+            width: 60px;
+            height: 75px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(216, 177, 90, 0.5));
+        }
+
+        /* Zone de tirage */
+        .zone-tirage {
+            background: linear-gradient(135deg, rgba(43, 15, 58, 0.4) 0%, rgba(11, 31, 58, 0.4) 100%);
+            border: 1px solid rgba(216, 177, 90, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .instruction {
+            text-align: center;
+            color: rgba(216, 177, 90, 0.8);
+            font-size: 1rem;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        /* Le sac de runes */
+        #sac-runes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+        .rune-cachee {
+            width: 45px;
+            height: 55px;
+            background: linear-gradient(145deg, #2a1f3d 0%, #1a0f2e 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid rgba(216, 177, 90, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rune-cachee::before {
+            content: 'ᚱ';
+            font-size: 1.5rem;
+            color: rgba(216, 177, 90, 0.15);
+            font-family: serif;
+        }
+        .rune-cachee:hover {
+            transform: translateY(-8px) scale(1.05);
+            border-color: #D8B15A;
+            box-shadow: 0 10px 30px rgba(216, 177, 90, 0.3), 0 0 20px rgba(216, 177, 90, 0.2);
+        }
+        .rune-cachee:hover::before {
+            color: rgba(216, 177, 90, 0.4);
+        }
+        .rune-cachee.selected {
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+
+        /* Bouton révélation */
+        #btn-reveal {
+            display: none;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #D8B15A 0%, #B8963A 100%);
+            color: #0B1F3A;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(216, 177, 90, 0.4);
+            letter-spacing: 1px;
+        }
+        #btn-reveal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(216, 177, 90, 0.6);
+        }
+
+        /* Résultat */
+        #resultat-runes {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(43, 15, 58, 0.5) 0%, rgba(11, 31, 58, 0.5) 100%);
+            border: 2px solid rgba(216, 177, 90, 0.3);
+            border-radius: 15px;
+            display: none;
+        }
+        #resultat-runes.visible {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .rune-result {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(216, 177, 90, 0.2);
+        }
+        .rune-result:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .rune-result-img {
+            width: 70px;
+            height: 90px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(43, 15, 58, 0.6) 0%, rgba(11, 31, 58, 0.6) 100%);
+            border: 2px solid rgba(216, 177, 90, 0.5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #D8B15A;
+        }
+        .rune-result-img img {
+            width: 50px;
+            height: 65px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(216, 177, 90, 0.5));
+        }
+        .rune-result-content h4 {
+            font-family: 'Cinzel', serif;
+            color: #D8B15A;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .rune-result-content .position {
+            color: rgba(216, 177, 90, 0.6);
+            font-size: 0.85rem;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .rune-result-content p {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+        }
+
+        .synthese {
+            background: linear-gradient(135deg, rgba(216, 177, 90, 0.15) 0%, rgba(184, 150, 58, 0.1) 100%);
+            border: 1px solid rgba(216, 177, 90, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        .synthese h4 {
+            font-family: 'Cinzel', serif;
+            color: #D8B15A;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .synthese p {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+
+        /* Reset button */
+        #btn-reset {
+            display: none;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: transparent;
+            color: rgba(216, 177, 90, 0.8);
+            border: 2px solid rgba(216, 177, 90, 0.5);
+            border-radius: 50px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #btn-reset:hover {
+            background: rgba(216, 177, 90, 0.1);
+            border-color: #D8B15A;
+            color: #D8B15A;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .titre-runes { font-size: 1.5rem; }
+            #slots-tirage { gap: 15px; }
+            .slot { width: 80px; height: 110px; }
+            .slot-inner { width: 65px; height: 80px; }
+            .slot-label { font-size: 0.7rem; }
+            .rune-cachee { width: 38px; height: 48px; }
+            .rune-result { flex-direction: column; align-items: center; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ciel étoilé -->
+    <div class="stars" id="stars"></div>
+
+    <div class="runes-container" id="runes-container">
+        <h2 class="titre-runes">ᚱ Oracle des Runes ᚱ</h2>
+        <p class="sous-titre">Laissez les symboles anciens vous guider</p>
+        
+        <!-- Les 3 emplacements -->
+        <div id="slots-tirage">
+            <div class="slot" id="slot-1">
+                <div class="slot-inner"><span>?</span></div>
+                <span class="slot-label">Passé</span>
+            </div>
+            <div class="slot" id="slot-2">
+                <div class="slot-inner"><span>?</span></div>
+                <span class="slot-label">Présent</span>
+            </div>
+            <div class="slot" id="slot-3">
+                <div class="slot-inner"><span>?</span></div>
+                <span class="slot-label">Futur</span>
+            </div>
+        </div>
+
+        <!-- Zone de tirage -->
+        <div class="zone-tirage">
+            <p class="instruction" id="instruction">✨ Choisissez 3 runes pour révéler votre destin...</p>
+            <div id="sac-runes"></div>
+        </div>
+
+        <button id="btn-reveal">🔮 Révéler l'interprétation</button>
+        <button id="btn-reset">🌙 Nouveau Tirage</button>
+
+        <div id="resultat-runes"></div>
+    </div>
+
+    <script>
+    (function() {
+        // --- LES 24 RUNES ---
+        const mesRunes = [
+            { nom: "Fehu", symbole: "ᚠ", txt: "Richesse et abondance matérielle. Cette rune annonce une période de prospérité, mais vous rappelle que la vraie richesse réside dans ce que vous partagez.", motCle: "Abondance" },
+            { nom: "Uruz", symbole: "ᚢ", txt: "Force vitale et santé. Vous disposez d'une énergie puissante pour surmonter les obstacles. La guérison et la vitalité sont à votre portée.", motCle: "Force" },
+            { nom: "Thurisaz", symbole: "ᚦ", txt: "Protection et défense. Un gardien veille sur vous. Cette rune vous met en garde contre les actions impulsives et vous invite à la prudence.", motCle: "Protection" },
+            { nom: "Ansuz", symbole: "ᚨ", txt: "Communication divine et sagesse. Un message important vous est transmis. Restez attentif aux signes et aux paroles qui résonnent en vous.", motCle: "Sagesse" },
+            { nom: "Raidho", symbole: "ᚱ", txt: "Voyage et mouvement. Votre chemin vous mène vers de nouvelles destinations, physiques ou spirituelles. La vie est un voyage, pas une destination.", motCle: "Voyage" },
+            { nom: "Kenaz", symbole: "ᚲ", txt: "Illumination et créativité. La lumière perce les ténèbres. Votre feu intérieur brille fort, laissez-le guider vos créations et vos choix.", motCle: "Illumination" },
+            { nom: "Gebo", symbole: "ᚷ", txt: "Don et partenariat. L'équilibre entre donner et recevoir. Un cadeau inattendu ou une union harmonieuse se profile à l'horizon.", motCle: "Union" },
+            { nom: "Wunjo", symbole: "ᚹ", txt: "Joie et bonheur. Une période de félicité approche. Vos efforts portent leurs fruits et la récompense est au rendez-vous.", motCle: "Joie" },
+            { nom: "Hagalaz", symbole: "ᚺ", txt: "Transformation et bouleversement. Les forces de la nature vous rappellent que la destruction précède la renaissance. Faites confiance au processus.", motCle: "Transformation" },
+            { nom: "Nauthiz", symbole: "ᚾ", txt: "Nécessité et résilience. Vos limites vous enseignent la patience. Les obstacles d'aujourd'hui construisent votre force de demain.", motCle: "Résilience" },
+            { nom: "Isa", symbole: "ᛁ", txt: "Glace et introspection. Un temps de pause est nécessaire. Dans le silence et l'immobilité, vous trouverez les réponses que vous cherchez.", motCle: "Introspection" },
+            { nom: "Jera", symbole: "ᛃ", txt: "Récolte et cycles naturels. Ce que vous avez semé sera récolté. Patience et persévérance vous mèneront à l'abondance méritée.", motCle: "Récolte" },
+            { nom: "Eihwaz", symbole: "ᛇ", txt: "Endurance et protection. Vous êtes plus fort que vous ne le pensez. Cette rune vous connecte à la sagesse ancestrale et à votre pouvoir intérieur.", motCle: "Endurance" },
+            { nom: "Perthro", symbole: "ᛈ", txt: "Mystère et destin. Les voiles se lèvent sur votre chemin de vie. Le hasard n'existe pas - tout a un sens caché à découvrir.", motCle: "Destin" },
+            { nom: "Elhaz", symbole: "ᛉ", txt: "Protection spirituelle supérieure. Une énergie divine vous entoure et vous protège. Vous êtes guidé et soutenu par des forces invisibles.", motCle: "Protection Divine" },
+            { nom: "Sowilo", symbole: "ᛊ", txt: "Soleil et victoire. La lumière triomphe des ténèbres. Succès, santé et réussite vous attendent. Votre éclat est reconnu.", motCle: "Victoire" },
+            { nom: "Tiwaz", symbole: "ᛏ", txt: "Justice et sacrifice. Le guerrier spirituel en vous se réveille. Défendez vos valeurs avec courage et intégrité.", motCle: "Justice" },
+            { nom: "Berkano", symbole: "ᛒ", txt: "Naissance et renouveau. Un nouveau cycle commence. La graine que vous avez plantée commence à germer - nourrissez-la avec amour.", motCle: "Renouveau" },
+            { nom: "Ehwaz", symbole: "ᛖ", txt: "Harmonie et coopération. Deux forces travaillent ensemble pour avancer. Un partenariat fructueux ou une collaboration bénéfique se présente.", motCle: "Harmonie" },
+            { nom: "Mannaz", symbole: "ᛗ", txt: "Humanité et conscience de soi. Vous êtes le miroir de l'univers. Connectez-vous à votre essence véritable et à ceux qui vous entourent.", motCle: "Humanité" },
+            { nom: "Laguz", symbole: "ᛚ", txt: "Intuition et flux émotionnel. Laissez-vous porter par le courant de votre être intérieur. L'eau vous montre le chemin de l'âme.", motCle: "Intuition" },
+            { nom: "Ingwaz", symbole: "ᛜ", txt: "Fertilité et potentiel latent. Une énergie créatrice immense dort en vous. Le moment de l'éclosion approche - préparez-vous.", motCle: "Potentiel" },
+            { nom: "Dagaz", symbole: "ᛞ", txt: "Éveil et transformation totale. L'aube d'un nouveau jour. La percée tant attendue se produit - vous voyez enfin clair.", motCle: "Éveil" },
+            { nom: "Othala", symbole: "ᛟ", txt: "Héritage et racines. Votre lignée et votre foyer spirituel vous soutiennent. Connectez-vous à la sagesse de vos ancêtres.", motCle: "Héritage" }
+        ];
+
+        let piochees = [];
+        const sac = document.getElementById('sac-runes');
+        const positions = ['Passé', 'Présent', 'Futur'];
+
+        // Créer les étoiles
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.width = (Math.random() * 2 + 1) + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+        }
+
+        // Mélanger les runes et afficher le sac
+        const runesMelangees = [...mesRunes].sort(() => Math.random() - 0.5);
+        let runeIndex = 0;
+        
+        for (let i = 0; i < 24; i++) {
+            const r = document.createElement('div');
+            r.className = 'rune-cachee';
+            r.dataset.index = runeIndex;
+            r.onclick = function() { piocher(this); };
+            sac.appendChild(r);
+            runeIndex = (runeIndex + 1) % mesRunes.length;
+        }
+
+        function piocher(el) {
+            if (piochees.length < 3) {
+                // Rune aléatoire
+                const indexAleatoire = Math.floor(Math.random() * mesRunes.length);
+                const rune = { ...mesRunes[indexAleatoire] };
+                
+                piochees.push(rune);
+                el.classList.add('selected');
+                
+                // Animation
+                el.style.transform = 'scale(0) rotate(180deg)';
+                
+                // Remplir le slot
+                const slot = document.getElementById(`slot-${piochees.length}`);
+                const slotInner = slot.querySelector('.slot-inner');
+                slot.classList.add('active');
+                
+                setTimeout(() => {
+                    slotInner.innerHTML = `<span style="font-size: 2rem; color: #D8B15A; text-shadow: 0 0 20px rgba(216, 177, 90, 0.8);">${rune.symbole}</span>`;
+                }, 300);
+
+                // Mettre à jour l'instruction
+                const instruction = document.getElementById('instruction');
+                if (piochees.length === 1) {
+                    instruction.textContent = '✨ Encore 2 runes à choisir...';
+                } else if (piochees.length === 2) {
+                    instruction.textContent = '✨ Une dernière rune...';
+                } else {
+                    instruction.textContent = '✨ Votre tirage est complet !';
+                    document.getElementById('btn-reveal').style.display = 'block';
+                }
+            }
+        }
+
+        document.getElementById('btn-reveal').onclick = interpreterRunes;
+
+        function interpreterRunes() {
+            const res = document.getElementById('resultat-runes');
+            const btn = document.getElementById('btn-reveal');
+            const resetBtn = document.getElementById('btn-reset');
+            const instruction = document.getElementById('instruction');
+            
+            instruction.textContent = 'ᚱ Votre oracle a parlé ᚱ';
+            btn.style.display = 'none';
+            resetBtn.style.display = 'block';
+
+            let html = '';
+            piochees.forEach((r, i) => {
+                html += `
+                    <div class="rune-result">
+                        <div class="rune-result-img">${r.symbole}</div>
+                        <div class="rune-result-content">
+                            <h4>${r.nom}</h4>
+                            <p class="position">${positions[i]} • ${r.motCle}</p>
+                            <p>${r.txt}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Synthèse
+            const synthese = getSynthese(piochees);
+            html += `
+                <div class="synthese">
+                    <h4>🌟 Synthèse du Tirage 🌟</h4>
+                    <p>${synthese}</p>
+                </div>
+            `;
+
+            res.innerHTML = html;
+            res.classList.add('visible');
+            res.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getSynthese(runes) {
+            const themes = runes.map(r => r.motCle.toLowerCase());
+            const syntheseMap = {
+                'abondance,force,protection': 'Une période de grande prospérité s\'annonce, protégée par votre force intérieure. Les fondations sont solides.',
+                'sagesse,voyage,illumination': 'Votre quête de vérité vous mène vers une révélation majeure. La lumière que vous cherchez est déjà en vous.',
+                'joie,union,victoire': 'Le bonheur vous attend au détour du chemin. Une union ou un partenariat couronnera vos efforts.',
+                'transformation,résilience,introspection': 'Le changement que vous traversez est nécessaire. Dans le silence, vous trouverez votre vraie force.',
+                'destin,protection divine,éveil': 'Votre chemin est guidé par des forces supérieures. Une prise de conscience majeure approche.',
+                'renouveau,potentiel,héritage': 'Vous vous reconnectez à votre essence véritable. Le passé nourrit votre avenir.',
+            };
+            
+            const key = themes.sort().join(',');
+            return syntheseMap[key] || 'Les runes vous invitent à embrasser le changement avec confiance. Votre destin se dessine harmonieusement à travers ces trois énergies complémentaires.';
+        }
+
+        // Reset
+        document.getElementById('btn-reset').onclick = function() {
+            location.reload();
+        };
+    })();
+    </script>
+</body>
+</html>
