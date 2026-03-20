@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { calculateLunarSign } from '@/lib/lunar-signs';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -12,6 +13,76 @@ interface Message {
 interface AiLunaWidgetProps {
   isEmbed?: boolean;
 }
+
+// Détecter si on est sur Netlify ou en local
+const getApiUrl = () => {
+  if (typeof window !== 'undefined') {
+    // Sur Netlify, utiliser la fonction Netlify
+    if (window.location.hostname.includes('netlify.app') || window.location.hostname.includes('ai-luna')) {
+      return '/.netlify/functions/luna-chat';
+    }
+  }
+  // En développement local ou sur Cloudflare, utiliser l'API route Next.js
+  return '/api/luna-chat';
+};
+
+// Extraire le contexte du signe lunaire depuis le message
+const extractLunarSignContext = (content: string): string => {
+  const monthNames: Record<string, number> = {
+    'janvier': 1, 'février': 2, 'mars': 3, 'avril': 4, 'mai': 5, 'juin': 6,
+    'juillet': 7, 'août': 8, 'septembre': 9, 'octobre': 10, 'novembre': 11, 'décembre': 12
+  };
+
+  const datePatterns = [
+    /(\d{1,2})[\/\-\s](\d{1,2})[\/\-\s](\d{4})/,
+    /(\d{1,2})\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{4})/i,
+    /(?:le\s+)?(\d{1,2})\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(\d{4})/i,
+    /né(?:e)?\s+(?:le\s+)?(\d{1,2})[\/\-\s](\d{1,2})[\/\-\s](\d{4})/i,
+  ];
+
+  for (const pattern of datePatterns) {
+    const match = content.toLowerCase().match(pattern);
+    if (match) {
+      let day: number, month: number, year: number;
+      
+      if (match[2] && isNaN(parseInt(match[2]))) {
+        day = parseInt(match[1]);
+        month = monthNames[match[2].toLowerCase()] || 1;
+        year = parseInt(match[3]);
+      } else {
+        day = parseInt(match[1]);
+        month = parseInt(match[2]);
+        year = parseInt(match[3]);
+      }
+
+      const lunarSign = calculateLunarSign(day, month, year);
+      if (lunarSign) {
+        return `
+INFORMATIONS CALCULÉES:
+Le signe lunaire calculé pour cette personne est: ${lunarSign.name} (${lunarSign.symbol})
+
+Détails du signe:
+- Élément: ${lunarSign.element}
+- Planète gouvernante: ${lunarSign.planet}
+- Pierre: ${lunarSign.stone}
+- Mot-clé: ${lunarSign.keyword}
+
+Description: ${lunarSign.description}
+
+Besoins émotionnels: ${lunarSign.emotionalNeeds}
+
+En amour: ${lunarSign.inLove}
+
+Conseils personnalisés: ${lunarSign.advice}
+
+Donne une interprétation personnalisée et bienveillante de ce signe lunaire à la personne.
+`;
+      }
+      break;
+    }
+  }
+  return '';
+};
 
 // Composant pour le ciel étoilé animé AVEC ÉTOILES FILANTES
 function StarryBackground() {
@@ -185,10 +256,16 @@ export default function AiLunaWidget({ isEmbed = false }: AiLunaWidgetProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/luna-chat', {
+      // Calculer le contexte du signe lunaire côté client
+      const lunarSignContext = extractLunarSignContext(inputValue);
+      
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMessage] })
+        body: JSON.stringify({ 
+          messages: [...messages, userMessage],
+          lunarSignContext 
+        })
       });
 
       const data = await response.json();
