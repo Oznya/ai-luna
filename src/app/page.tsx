@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import AiLunaWidget from '@/components/AiLunaWidget';
 
 // Composant pour le ciel étoilé animé
@@ -119,27 +119,6 @@ function StarryBackground() {
 }
 
 export default function Home() {
-  const [showCode, setShowCode] = useState(false);
-  
-  const embedCode = `<!-- AI Luna Widget - Version Pastille -->
-<script>
-  (function() {
-    var script = document.createElement('script');
-    script.src = 'https://votre-domaine.com/widget.js';
-    script.async = true;
-    document.head.appendChild(script);
-  })();
-</script>
-
-<!-- OU Version iframe plein écran -->
-<iframe 
-  src="https://votre-domaine.com/embed" 
-  width="100%" 
-  height="600px" 
-  frameborder="0"
-  style="border-radius: 16px; overflow: hidden;">
-</iframe>`;
-
   return (
     <div className="min-h-screen text-white" style={{ fontFamily: 'Georgia, serif' }}>
       <StarryBackground />
@@ -147,16 +126,20 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Logo */}
+          {/* Logo - Déesse Lunaire */}
           <div className="mb-8 flex justify-center">
             <div 
-              className="w-32 h-32 rounded-full flex items-center justify-center text-6xl animate-pulse"
+              className="w-40 h-40 rounded-full flex items-center justify-center overflow-hidden"
               style={{ 
                 background: 'linear-gradient(135deg, #D8B15A 0%, #B8963A 100%)',
                 boxShadow: '0 0 60px rgba(216, 177, 90, 0.5)'
               }}
             >
-              🌙
+              <img 
+                src="/deesse-lunaire.png" 
+                alt="Luna - Déesse Lunaire" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
@@ -215,8 +198,10 @@ export default function Home() {
 
           {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => setShowCode(!showCode)}
+            <a
+              href="https://www.oznya.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105"
               style={{ 
                 background: 'linear-gradient(135deg, #D8B15A 0%, #B8963A 100%)',
@@ -224,84 +209,11 @@ export default function Home() {
                 boxShadow: '0 0 30px rgba(216, 177, 90, 0.4)'
               }}
             >
-              🔧 Obtenir le code d&apos;intégration
-            </button>
-            
-            <a
-              href="/embed"
-              target="_blank"
-              className="px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 border-2"
-              style={{ 
-                borderColor: '#D8B15A',
-                color: '#D8B15A'
-              }}
-            >
-              👁️ Voir la démo plein écran
+              ✨ Visitez le site Oznya
             </a>
           </div>
         </div>
       </section>
-
-      {/* Code Integration Section */}
-      {showCode && (
-        <section className="relative z-10 py-16 px-4">
-          <div className="max-w-3xl mx-auto">
-            <div 
-              className="p-8 rounded-2xl border border-[#D8B15A]/30"
-              style={{ background: 'rgba(11, 31, 58, 0.9)' }}
-            >
-              <h2 className="text-2xl font-semibold text-[#D8B15A] mb-6">
-                📋 Code d&apos;intégration pour Systeme.io
-              </h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg text-[#D8B15A]/80 mb-2">Option 1: Widget en Pastille (bouton flottant)</h3>
-                  <p className="text-white/60 text-sm mb-3">
-                    Ajoutez ce code avant la balise &lt;/body&gt; de votre page. Un bouton lune apparaîtra en bas à droite.
-                  </p>
-                  <div className="bg-[#0B1F3A] p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-[#D8B15A] text-sm whitespace-pre-wrap">{`<script src="https://votre-domaine.com/widget.js" async></script>`}</pre>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg text-[#D8B15A]/80 mb-2">Option 2: Iframe Plein Écran</h3>
-                  <p className="text-white/60 text-sm mb-3">
-                    Intégrez directement dans une page ou un popup Systeme.io.
-                  </p>
-                  <div className="bg-[#0B1F3A] p-4 rounded-lg overflow-x-auto">
-                    <pre className="text-[#D8B15A] text-sm whitespace-pre-wrap">{`<iframe 
-  src="https://votre-domaine.com/embed" 
-  width="100%" 
-  height="600px" 
-  frameborder="0"
-  style="border-radius: 16px;">
-</iframe>`}</pre>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg border border-[#D8B15A]/30 bg-[#2B0F3A]/50">
-                  <h4 className="text-[#D8B15A] font-semibold mb-2">💡 Instructions pour Systeme.io:</h4>
-                  <ol className="text-white/70 text-sm space-y-2 list-decimal list-inside">
-                    <li>Allez dans votre funnel ou site Systeme.io</li>
-                    <li>Ajoutez un bloc &quot;HTML/Script&quot; ou &quot;Embed&quot;</li>
-                    <li>Collez le code de votre choix</li>
-                    <li>Remplacez &quot;votre-domaine.com&quot; par l&apos;URL de votre widget</li>
-                  </ol>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setShowCode(false)}
-                className="mt-6 text-[#D8B15A]/70 hover:text-[#D8B15A] transition-colors"
-              >
-                ✕ Fermer
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Footer */}
       <footer className="relative z-10 py-8 px-4 border-t border-[#D8B15A]/20">
