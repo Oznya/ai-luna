@@ -156,8 +156,7 @@ export default function Home() {
           </p>
           
           <p className="text-lg text-white/70 mb-12 max-w-2xl mx-auto">
-            Un widget conversationnel mystique pour révéler les secrets de votre Lune natale. 
-            Basé sur le livre &quot;Sous quelle lune êtes-vous née?&quot; de Diane Boyer.
+            Je suis l'assistante mystique pour révéler les secrets de votre Lune natale, basé sur le livre &quot;Sous quelle lune êtes-vous née?&quot; de Diane Boyer.
           </p>
 
           {/* Features */}
@@ -184,16 +183,17 @@ export default function Home() {
               </p>
             </div>
             
-            <div 
-              className="p-6 rounded-2xl border border-[#D8B15A]/30 backdrop-blur-sm"
+            <a 
+              href="/tarot.html"
+              className="p-6 rounded-2xl border border-[#D8B15A]/30 backdrop-blur-sm block transition-all hover:scale-105 hover:border-[#D8B15A]/60 cursor-pointer"
               style={{ background: 'rgba(43, 15, 58, 0.5)' }}
             >
-              <div className="text-4xl mb-4">📱</div>
-              <h3 className="text-[#D8B15A] text-lg font-semibold mb-2">Facile à Intégrer</h3>
+              <div className="text-4xl mb-4">🎴</div>
+              <h3 className="text-[#D8B15A] text-lg font-semibold mb-2">Tarot Lunaire</h3>
               <p className="text-white/70 text-sm">
-                Widget en pastille ou iframe pour Systeme.io et autres plateformes.
+                Découvrez les 22 cartes mystiques et laissez la Lune vous guider.
               </p>
-            </div>
+            </a>
           </div>
 
           {/* CTA */}
