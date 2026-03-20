@@ -225,3 +225,9 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET / 200 in 33ms (compile: 3ms, render: 30ms)
  GET / 200 in 32ms (compile: 5ms, render: 28ms)
  GET / 200 in 28ms (compile: 1953µs, render: 26ms)
+ GET /embed 200 in 36ms (compile: 3ms, render: 33ms)
+Erreur Groq API: { error: { message: 'Forbidden' } }
+ POST /api/luna-chat 500 in 107ms (compile: 59ms, render: 48ms)
+Erreur Groq API: { error: { message: 'Forbidden' } }
+ POST /api/luna-chat 500 in 37ms (compile: 2ms, render: 35ms)
+ GET / 200 in 38ms (compile: 1977µs, render: 36ms)
