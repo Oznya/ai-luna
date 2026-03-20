@@ -1,0 +1,340 @@
+<div id="oznya-miroir-global">
+
+    <h1 class="titre-miroir">Le Miroir de l'A.M.I.E.™</h1>
+    <p class="consigne-miroir">✨ Clique sur le miroir pour révéler ton message ✨</p>
+
+    <!-- MIROIR -->
+    <div id="miroir-container" onclick="activerMiroir()">
+
+        <img src="https://rococo-biscuit-2367cb.netlify.app/miroir-ancien-allonge.png" id="miroir-img">
+
+        <!-- ZONE RÉELLE DU MIROIR (OVALE) -->
+        <div class="zone-miroir">
+
+            <div class="lumiere-interieure"></div>
+
+            <div class="symbole-apparition" id="symbole-1"></div>
+            <div class="symbole-apparition" id="symbole-2"></div>
+            <div class="symbole-apparition" id="symbole-3"></div>
+
+        </div>
+
+    </div>
+
+    <!-- RESULTAT -->
+    <div id="revelation-miroir">
+        <h2>Le Murmure de ton Essence</h2>
+        <div id="texte-revelation"></div>
+
+        <a href="https://www.uneamiedanslemiroir.com" target="_blank" rel="noopener noreferrer" class="btn-amie">
+            Retrouve ton AMIE™
+        </a>
+    </div>
+
+</div>
+
+<style>
+
+/* GLOBAL */
+#oznya-miroir-global {
+    background: linear-gradient(160deg, #0B1F3A 0%, #1a0f2e 50%, #050510 100%);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: auto;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet étoilé en fond */
+#oznya-miroir-global::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(1.5px 1.5px at 20% 30%, rgba(216, 177, 90, 0.6), transparent),
+        radial-gradient(1px 1px at 40% 70%, rgba(216, 177, 90, 0.4), transparent),
+        radial-gradient(1.5px 1.5px at 80% 20%, rgba(216, 177, 90, 0.5), transparent),
+        radial-gradient(1px 1px at 60% 80%, rgba(216, 177, 90, 0.3), transparent);
+    pointer-events: none;
+    animation: twinkle 4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* TITRE */
+.titre-miroir {
+    color: #D8B15A;
+    font-family: 'Georgia', serif;
+    font-size: 1.8rem;
+    text-shadow: 0 0 30px rgba(216, 177, 90, 0.5);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+}
+
+.consigne-miroir {
+    margin-bottom: 25px;
+    font-style: italic;
+    color: rgba(216, 177, 90, 0.8);
+    position: relative;
+    z-index: 1;
+}
+
+/* MIROIR CONTAINER */
+#miroir-container {
+    position: relative;
+    width: 380px; /* Ajusté pour le nouveau miroir allongé */
+    margin: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+#miroir-container:hover {
+    transform: scale(1.02);
+}
+
+/* IMAGE */
+#miroir-img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 0 30px rgba(216, 177, 90, 0.3));
+}
+
+/* ZONE INTERNE (CALÉE DANS L'OVALE DU NOUVEAU MIROIR) */
+.zone-miroir {
+    position: absolute;
+    top: 8%;       /* Ajusté pour le miroir allongé */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;    /* Largeur de la zone ovale */
+    height: 80%;   /* Plus grand car le miroir est plus long */
+    pointer-events: none;
+}
+
+/* LUMIÈRE */
+.lumiere-interieure {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, #f3cf7a 0%, #D8B15A 50%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    filter: blur(10px);
+    transition: 1.5s ease-out;
+}
+
+#miroir-container.actif .lumiere-interieure {
+    opacity: 1;
+    width: 180px;
+    height: 320px; /* Plus haut pour le miroir allongé */
+    filter: blur(70px);
+}
+
+/* SYMBOLS */
+.symbole-apparition {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-10deg);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 15px rgba(216, 177, 90, 0.6));
+}
+
+/* POSITIONS AJUSTÉES POUR LE MIROIR ALLONGÉ */
+#symbole-1 { 
+    top: 12%; 
+    left: 50%; 
+}
+#symbole-2 { 
+    top: 50%; 
+    left: 50%; 
+}
+#symbole-3 { 
+    top: 88%; 
+    left: 50%; 
+}
+
+.symbole-apparition.revele {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+}
+
+/* RESULTATS */
+#revelation-miroir {
+    display: none;
+    margin-top: 40px;
+    text-align: left;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(43, 15, 58, 0.4) 0%, rgba(11, 31, 58, 0.4) 100%);
+    border: 1px solid rgba(216, 177, 90, 0.3);
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#revelation-miroir h2 {
+    color: #D8B15A;
+    text-align: center;
+    margin-bottom: 25px;
+    font-family: 'Georgia', serif;
+    text-shadow: 0 0 20px rgba(216, 177, 90, 0.4);
+}
+
+/* CARTES */
+.carte-symbole {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    padding: 15px;
+    background: rgba(11, 31, 58, 0.5);
+    border-radius: 10px;
+    border-left: 3px solid #D8B15A;
+    transition: transform 0.3s ease;
+}
+
+.carte-symbole:hover {
+    transform: translateX(5px);
+}
+
+.carte-symbole img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(216, 177, 90, 0.5));
+}
+
+.carte-symbole strong {
+    color: #D8B15A;
+    display: block;
+    margin-bottom: 5px;
+    font-family: 'Georgia', serif;
+}
+
+.carte-symbole div {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+}
+
+/* BOUTON */
+.btn-amie {
+    display: inline-block;
+    margin-top: 25px;
+    border: 2px solid #D8B15A;
+    padding: 12px 30px;
+    color: #D8B15A;
+    text-decoration: none;
+    border-radius: 50px;
+    font-family: 'Georgia', serif;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.btn-amie:hover {
+    background: linear-gradient(135deg, #D8B15A 0%, #B8963A 100%);
+    color: #0B1F3A;
+    box-shadow: 0 0 30px rgba(216, 177, 90, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    #miroir-container {
+        width: 300px;
+    }
+    .symbole-apparition {
+        width: 40px;
+        height: 40px;
+    }
+    .carte-symbole {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+</style>
+
+<script>
+
+const mesSymboles = [
+    { nom: "L'Amie Retrouvée", img: "https://d1yei2z3i6k35z.cloudfront.net/1872133/69bdcbf6737915.64796964_1-AmieRetrouv%C3%A9e.png", txt: "Je suis là… reviens à toi." },
+    { nom: "Le Masque d'Or", img: "https://d1yei2z3i6k35z.cloudfront.net/1872133/69bdcc048b4248.17543286_2-LeMasquedOr.png", txt: "Tu te caches encore…" },
+    { nom: "La Clé Intérieure", img: "https://d1yei2z3i6k35z.cloudfront.net/1872133/69bdcc12212d11.82919304_3-LaCl%C3%A9Int%C3%A9rieure.png", txt: "Tout est déjà en toi." },
+    { nom: "Le Reflet Sombre", img: "https://d1yei2z3i6k35z.cloudfront.net/1872133/69bdcc2025d0f4.72787205_4-LeRefletSombre.png", txt: "Ta puissance est cachée là." }
+];
+
+let actif = false;
+
+function activerMiroir() {
+
+    if (actif) {
+        location.reload();
+        return;
+    }
+
+    actif = true;
+
+    const miroir = document.getElementById("miroir-container");
+    miroir.classList.add("actif");
+
+    const tirage = [...mesSymboles].sort(() => 0.5 - Math.random()).slice(0,3);
+
+    tirage.forEach((s, i) => {
+        setTimeout(() => {
+            const el = document.getElementById(`symbole-${i+1}`);
+            el.style.backgroundImage = `url('${s.img}')`;
+            el.classList.add("revele");
+        }, (i+1)*1200);
+    });
+
+    setTimeout(() => afficher(tirage), 5000);
+}
+
+function afficher(tirage) {
+
+    const zone = document.getElementById("revelation-miroir");
+    const contenu = document.getElementById("texte-revelation");
+
+    contenu.innerHTML = "";
+
+    tirage.forEach(s => {
+        contenu.innerHTML += `
+            <div class="carte-symbole">
+                <img src="${s.img}">
+                <div>
+                    <strong>${s.nom}</strong><br>
+                    ${s.txt}
+                </div>
+            </div>
+        `;
+    });
+
+    zone.style.display = "block";
+    zone.scrollIntoView({behavior:"smooth"});
+}
+
+</script>
