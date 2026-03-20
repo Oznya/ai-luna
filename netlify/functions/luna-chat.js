@@ -40,10 +40,26 @@ Ton style:
 - Toujours positif et encourageant`;
 
 exports.handler = async (event, context) => {
+  // Gérer les requêtes OPTIONS pour CORS
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
   // Vérifier la méthode HTTP
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({ error: 'Méthode non autorisée' })
     };
   }

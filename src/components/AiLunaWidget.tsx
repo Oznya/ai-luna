@@ -14,17 +14,11 @@ interface AiLunaWidgetProps {
   isEmbed?: boolean;
 }
 
-// Détecter si on est sur Netlify ou en local
-const getApiUrl = () => {
-  if (typeof window !== 'undefined') {
-    // Sur Netlify, utiliser la fonction Netlify
-    if (window.location.hostname.includes('netlify.app') || window.location.hostname.includes('ai-luna')) {
-      return '/.netlify/functions/luna-chat';
-    }
-  }
-  // En développement local ou sur Cloudflare, utiliser l'API route Next.js
-  return '/api/luna-chat';
-};
+// URL de l'API Luna - Utiliser directement la fonction Netlify
+// En développement local, utiliser l'API route Next.js
+const API_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? '/api/luna-chat'
+  : '/.netlify/functions/luna-chat';
 
 // Extraire le contexte du signe lunaire depuis le message
 const extractLunarSignContext = (content: string): string => {
@@ -259,7 +253,7 @@ export default function AiLunaWidget({ isEmbed = false }: AiLunaWidgetProps) {
       // Calculer le contexte du signe lunaire côté client
       const lunarSignContext = extractLunarSignContext(inputValue);
       
-      const response = await fetch(getApiUrl(), {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
