@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarot Lunaire - Oznya</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .tarot-container {
+      position: relative;
+      width: 100%;
+      min-height: 600px;
+      padding: 30px 20px;
+      background: linear-gradient(160deg, #0B1F3A 0%, #1a0f2e 50%, #0B1F3A 100%);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .tarot-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image:
+        radial-gradient(1.5px 1.5px at 10% 20%, rgba(216, 177, 90, 0.7), transparent),
+        radial-gradient(1px 1px at 30% 50%, rgba(216, 177, 90, 0.5), transparent),
+        radial-gradient(1.5px 1.5px at 50% 10%, rgba(216, 177, 90, 0.8), transparent),
+        radial-gradient(1px 1px at 70% 40%, rgba(216, 177, 90, 0.6), transparent);
+      pointer-events: none;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+    @keyframes twinkle { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    .tarot-title { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; }
+    .tarot-title h2 { font-family: 'Cinzel', serif; font-size: 2rem; color: #D8B15A; text-shadow: 0 0 30px rgba(216, 177, 90, 0.5); letter-spacing: 3px; }
+    .tarot-title p { color: rgba(216, 177, 90, 0.7); font-size: 1rem; margin-top: 8px; font-style: italic; }
+    .type-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; position: relative; z-index: 2; }
+    .type-btn { padding: 10px 18px; background: rgba(11, 31, 58, 0.8); border: 2px solid rgba(216, 177, 90, 0.4); border-radius: 25px; color: rgba(216, 177, 90, 0.8); font-family: 'Cinzel', serif; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; }
+    .type-btn:hover { background: rgba(216, 177, 90, 0.15); border-color: #D8B15A; color: #D8B15A; }
+    .type-btn.active { background: linear-gradient(135deg, rgba(216, 177, 90, 0.3) 0%, rgba(184, 150, 58, 0.2) 100%); border-color: #D8B15A; color: #D8B15A; }
+    .question-area { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; }
+    .question-input { width: 90%; max-width: 450px; padding: 12px 20px; background: rgba(11, 31, 58, 0.8); border: 2px solid rgba(216, 177, 90, 0.4); border-radius: 25px; color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 1rem; outline: none; }
+    .question-input::placeholder { color: rgba(216, 177, 90, 0.5); font-style: italic; }
+    .question-input:focus { border-color: #D8B15A; }
+    .instruction { text-align: center; color: rgba(216, 177, 90, 0.8); font-size: 0.95rem; margin-bottom: 15px; font-style: italic; position: relative; z-index: 2; }
+    .deck { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 15px 0; position: relative; z-index: 2; }
+    .deck-card { width: 50px; height: 70px; background: linear-gradient(145deg, #1a2a4a 0%, #0B1F3A 100%); border: 2px solid rgba(216, 177, 90, 0.4); border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-size: 1.4rem; color: rgba(216, 177, 90, 0.5); }
+    .deck-card:hover { transform: translateY(-4px); border-color: #D8B15A; }
+    .deck-card.selected { background: linear-gradient(145deg, rgba(216, 177, 90, 0.25) 0%, rgba(184, 150, 58, 0.15) 100%); border-color: #D8B15A; transform: translateY(-3px); }
+    .counter { text-align: center; color: rgba(216, 177, 90, 0.7); font-size: 0.85rem; margin-top: 8px; position: relative; z-index: 2; }
+    .reveal-btn { display: block; margin: 20px auto; padding: 12px 35px; background: linear-gradient(135deg, #D8B15A 0%, #B8963A 100%); border: none; border-radius: 25px; color: #0B1F3A; font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; position: relative; z-index: 2; }
+    .reveal-btn:hover { transform: scale(1.03); }
+    .reading { max-width: 550px; margin: 20px auto; padding: 20px; background: rgba(11, 31, 58, 0.7); border: 2px solid rgba(216, 177, 90, 0.4); border-radius: 15px; position: relative; z-index: 2; display: none; }
+    .reading.visible { display: block; animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .reading h3 { font-family: 'Cinzel', serif; color: #D8B15A; font-size: 1.3rem; text-align: center; margin-bottom: 15px; }
+    .reading-card { background: rgba(43, 15, 58, 0.5); border: 1px solid rgba(216, 177, 90, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
+    .card-image { width: 70px; height: 95px; border-radius: 6px; border: 2px solid rgba(216, 177, 90, 0.5); flex-shrink: 0; overflow: hidden; background: #1a2a4a; }
+    .card-image img { width: 100%; height: 100%; object-fit: cover; }
+    .card-content { flex: 1; }
+    .reading-card h4 { font-family: 'Cinzel', serif; color: #D8B15A; margin: 0 0 4px 0; font-size: 1rem; }
+    .card-position { color: rgba(216, 177, 90, 0.7); font-size: 0.8rem; margin-bottom: 6px; font-style: italic; }
+    .reading-card p { color: rgba(255, 255, 255, 0.85); line-height: 1.5; margin: 0; font-size: 0.9rem; }
+    .synthesis { background: linear-gradient(135deg, rgba(216, 177, 90, 0.15) 0%, rgba(184, 150, 58, 0.1) 100%); border: 2px solid rgba(216, 177, 90, 0.5); border-radius: 10px; padding: 15px; margin-top: 12px; }
+    .synthesis h4 { font-family: 'Cinzel', serif; color: #D8B15A; text-align: center; margin: 0 0 10px 0; font-size: 1.1rem; }
+    .synthesis p { color: rgba(255, 255, 255, 0.9); line-height: 1.6; text-align: center; font-size: 0.95rem; font-style: italic; }
+    .reset-btn { background: transparent; border: 2px solid rgba(216, 177, 90, 0.5); color: rgba(216, 177, 90, 0.8); padding: 10px 25px; border-radius: 20px; font-family: 'Cinzel', serif; cursor: pointer; display: block; margin: 15px auto; position: relative; z-index: 2; }
+    .reset-btn:hover { background: rgba(216, 177, 90, 0.1); border-color: #D8B15A; color: #D8B15A; }
+    .footer { text-align: center; margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(216, 177, 90, 0.2); position: relative; z-index: 2; }
+    .footer a { color: rgba(216, 177, 90, 0.8); text-decoration: none; font-style: italic; font-size: 0.9rem; }
+    @media (max-width: 500px) {
+      .tarot-title h2 { font-size: 1.5rem; }
+      .type-btn { padding: 8px 12px; font-size: 0.75rem; }
+      .deck-card { width: 42px; height: 60px; font-size: 1.2rem; }
+      .reading-card { flex-direction: column; align-items: center; text-align: center; }
+      .card-image { width: 80px; height: 110px; }
+    }
+  </style>
+</head>
+<body>
+<div class="tarot-container" id="app">
+  <div class="tarot-title">
+    <h2>✧ TAROT LUNAIRE ✧</h2>
+    <p>Laissez la Lune éclairer votre destin</p>
+  </div>
+  <div class="type-selector" id="typeSelector"></div>
+  <div class="question-area">
+    <input type="text" class="question-input" id="question" placeholder="Posez votre question à la Lune... (optionnel)">
+  </div>
+  <p class="instruction" id="instruction">Cliquez sur les cartes</p>
+  <div class="deck" id="deck"></div>
+  <p class="counter" id="counter"></p>
+  <button class="reveal-btn" id="revealBtn" style="display:none;">☽ Révéler l'interprétation ☽</button>
+  <div class="reading" id="reading"></div>
+  <button class="reset-btn" id="resetBtn" style="display:none;">Nouveau Tirage</button>
+  <div class="footer"><a href="https://oznya.com" target="_blank">✧ Découvrez Oznya ✧</a></div>
+</div>
+<script>
+const CARDS = [
+  { name: "La Lune Nouvelle", image: "/tarot-cards/01-lune-nouvelle.png", meaning: "Un nouveau cycle commence. C'est le temps des semences, des intentions et des nouveaux départs. Le moment est propice pour planter les graines de vos projets futurs." },
+  { name: "La Lune Croissante", image: "/tarot-cards/02-lune-croissante.png", meaning: "La croissance et le développement sont à l'honneur. Vos projets prennent forme, l'énergie monte. Persévérez dans vos efforts, les résultats approchent." },
+  { name: "Le Premier Quartier", image: "/tarot-cards/03-premier-quartier.png", meaning: "Moment de décision et d'action. Les obstacles demandent à être surmontés. Faites confiance à votre détermination pour avancer malgré les défis." },
+  { name: "La Lune Gibbeuse", image: "/tarot-cards/04-lune-gibbeuse.png", meaning: "L'accomplissement est proche. Affinez vos projets, ajustez les derniers détails. La patience et la persévérance porteront bientôt leurs fruits." },
+  { name: "La Pleine Lune", image: "/tarot-cards/05-pleine-lune.png", meaning: "Apogée, révélation et accomplissement. Ce que vous avez semé se manifeste pleinement. C'est un moment de célébration et de gratitude." },
+  { name: "La Lune Décroissante", image: "/tarot-cards/06-lune-decroissante.png", meaning: "Le temps de la récolte et du partage. Recueillez les fruits de votre travail et partagez votre abondance avec gratitude." },
+  { name: "Le Dernier Quartier", image: "/tarot-cards/07-dernier-quartier.png", meaning: "Période de réflexion et de lâcher-prise. Relâchez ce qui ne vous sert plus. Faites le tri dans votre vie pour préparer le prochain cycle." },
+  { name: "La Lune Noire", image: "/tarot-cards/08-lune-noire.png", meaning: "Introspection profonde et repos. Connectez-vous à votre sagesse intérieure. Dans le silence, les réponses les plus profondes émergent." },
+  { name: "L'Éclipse de Lune", image: "/tarot-cards/09-eclipse-lune.png", meaning: "Transformation puissante et changements inattendus. Un portail s'ouvre vers une nouvelle dimension de votre vie. Embrassez le changement." },
+  { name: "La Lune Bleue", image: "/tarot-cards/10-lune-bleue.png", meaning: "Événement rare et magique. Un vœu profond peut se réaliser. Saisissez cette énergie exceptionnelle pour manifester vos rêves." },
+  { name: "La Super Lune", image: "/tarot-cards/11-super-lune.png", meaning: "Énergie amplifiée et intensité maximale. Vos émotions sont à vif mais votre pouvoir de manifestation est décuplé." },
+  { name: "L'Ange Lunaire", image: "/tarot-cards/12-ange-lunaire.png", meaning: "Protection divine et guidance céleste. Vous êtes entouré d'amour et de lumière. Les anges vous guident sur votre chemin." },
+  { name: "L'Étoile du Berger", image: "/tarot-cards/13-etoile-berger.png", meaning: "Espoir et guidance. Une lumière brille dans l'obscurité pour vous montrer le chemin. Faites confiance aux signes de l'univers." },
+  { name: "Le Cratère Mystique", image: "/tarot-cards/14-crater-mystique.png", meaning: "Profondeur et mystères révélés. Plongez dans les couches cachées de votre être. Les secrets anciens attendent d'être découverts." },
+  { name: "La Mer de Tranquillité", image: "/tarot-cards/15-mer-tranquillite.png", meaning: "Paix intérieure et sérénité. Trouvez votre calme au milieu du chaos. La vraie force réside dans la tranquillité de l'esprit." },
+  { name: "Le Clair de Lune", image: "/tarot-cards/16-clair-de-lune.png", meaning: "Romantisme et inspiration. Laissez la lumière argentée de la lune illuminer votre cœur. La beauté et la poésie vous entourent." },
+  { name: "L'Aurore Boréale", image: "/tarot-cards/17-aurore-boreale.png", meaning: "Merveille et émerveillement. La magie opère dans votre vie. Restez ouvert aux expériences extraordinaires." },
+  { name: "Le Ciel Étoilé", image: "/tarot-cards/18-ciel-etoile.png", meaning: "Infini des possibles. Vous êtes connecté à l'univers entier. Vos rêves sont les graines des étoiles de demain." },
+  { name: "La Comète", image: "/tarot-cards/19-comete.png", meaning: "Changement rapide et opportunité fulgurante. Saisissez l'instant, car cette énergie ne repassera pas de sitôt." },
+  { name: "Le Croissant d'Or", image: "/tarot-cards/20-croissant-or.png", meaning: "Abondance et prospérité croissante. Les portes de l'abondance s'ouvrent pour vous. Accueillez les bénédictions." },
+  { name: "Le Voile Lunaire", image: "/tarot-cards/21-voile-lunaire.png", meaning: "Mystère et intuition. Ce qui est caché sera révélé en temps voulu. Faites confiance au processus de dévoilement." },
+  { name: "Le Retour de Lune", image: "/tarot-cards/22-retour-lune.png", meaning: "Cycle complété et renouveau. Un chapitre se termine pour qu'un autre commence. La roue de la vie tourne en votre faveur." }
+];
+const TYPES = [
+  { id: 'simple', name: 'Tirage Simple', count: 1 },
+  { id: 'croix', name: 'Croix Lunaire', count: 3 },
+  { id: 'amour', name: 'Tarot Amour', count: 3 },
+  { id: 'complete', name: 'Tirage Complet', count: 5 }
+];
+const POSITIONS = {
+  simple: [{ name: "Votre Message Lunaire", desc: "Ce que la Lune vous révèle maintenant" }],
+  croix: [{ name: "Le Présent", desc: "Votre situation actuelle" }, { name: "L'Obstacle", desc: "Ce qui vous freine" }, { name: "La Solution", desc: "Le chemin à suivre" }],
+  amour: [{ name: "Votre Cœur", desc: "Vos sentiments profonds" }, { name: "L'Autre", desc: "La personne concernée" }, { name: "L'Avenir", desc: "Ce qui vous attend" }],
+  complete: [{ name: "Le Passé", desc: "Ce qui vous a mené ici" }, { name: "Le Présent", desc: "Votre situation actuelle" }, { name: "L'Avenir Proche", desc: "Ce qui approche" }, { name: "Le Conseil Lunaire", desc: "La guidance de la Lune" }, { name: "Le Résultat", desc: "L'aboutissement probable" }]
+};
+const SYNTHESIS = {
+  simple: "La Lune vous murmure ce message. Prenez le temps de l'intégrer dans votre cœur.",
+  croix: "Chaque obstacle est une opportunité déguisée. Le chemin se dessine devant vous.",
+  amour: "L'amour est un voyage infini. Laissez votre cœur vous guider vers votre destin.",
+  complete: "Les cycles lunaires vous accompagnent. Faites confiance au processus de transformation."
+};
+
+let currentType = 'simple', shuffled = [], selected = [];
+const deckEl = document.getElementById('deck');
+const counterEl = document.getElementById('counter');
+const revealBtn = document.getElementById('revealBtn');
+const readingEl = document.getElementById('reading');
+const resetBtn = document.getElementById('resetBtn');
+const instructionEl = document.getElementById('instruction');
+const typeSelector = document.getElementById('typeSelector');
+
+function init() {
+  typeSelector.innerHTML = TYPES.map(t => `<button class="type-btn${t.id === currentType ? ' active' : ''}" data-type="${t.id}">${t.name}</button>`).join('');
+  typeSelector.onclick = e => { if (e.target.classList.contains('type-btn')) { currentType = e.target.dataset.type; createDeck(); } };
+  resetBtn.onclick = () => { document.getElementById('question').value = ''; createDeck(); };
+  revealBtn.onclick = showReading;
+  createDeck();
+}
+
+function createDeck() {
+  shuffled = [...CARDS].sort(() => Math.random() - 0.5);
+  selected = [];
+  const count = TYPES.find(t => t.id === currentType).count;
+  deckEl.innerHTML = shuffled.map((_, i) => `<div class="deck-card" data-idx="${i}">☽</div>`).join('');
+  deckEl.onclick = e => { if (e.target.classList.contains('deck-card')) toggleCard(parseInt(e.target.dataset.idx)); };
+  counterEl.textContent = `Sélectionnez ${count} carte${count > 1 ? 's' : ''}`;
+  instructionEl.textContent = 'Cliquez sur les cartes qui vous appellent...';
+  revealBtn.style.display = 'none';
+  readingEl.classList.remove('visible');
+  resetBtn.style.display = 'none';
+}
+
+function toggleCard(idx) {
+  const count = TYPES.find(t => t.id === currentType).count;
+  const card = deckEl.children[idx];
+  if (selected.includes(idx)) { selected = selected.filter(i => i !== idx); card.classList.remove('selected'); card.textContent = '☽'; }
+  else if (selected.length < count) { selected.push(idx); card.classList.add('selected'); card.textContent = '★'; }
+  counterEl.textContent = `${selected.length} / ${count} carte${count > 1 ? 's' : ''}`;
+  revealBtn.style.display = selected.length === count ? 'block' : 'none';
+  if (selected.length === count) instructionEl.textContent = '✧ Vos cartes sont choisies ✧';
+}
+
+function showReading() {
+  const question = document.getElementById('question').value;
+  const positions = POSITIONS[currentType];
+  let html = '<h3>☽ Votre Lecture Lunaire ☽</h3>';
+  if (question) html += `<p style="text-align:center;color:rgba(216,177,90,0.8);font-style:italic;margin-bottom:15px;">"${question}"</p>`;
+  selected.forEach((idx, i) => {
+    const card = shuffled[idx];
+    const pos = positions[i] || { name: `Carte ${i+1}`, desc: '' };
+    html += `<div class="reading-card"><div class="card-image"><img src="${card.image}" alt="${card.name}"></div><div class="card-content"><h4>${card.name}</h4><p class="card-position"><em>${pos.name}</em> — ${pos.desc}</p><p>${card.meaning}</p></div></div>`;
+  });
+  html += `<div class="synthesis"><h4>✧ Message de la Lune ✧</h4><p>${SYNTHESIS[currentType]}</p></div>`;
+  readingEl.innerHTML = html;
+  readingEl.classList.add('visible');
+  revealBtn.style.display = 'none';
+  resetBtn.style.display = 'block';
+  readingEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
